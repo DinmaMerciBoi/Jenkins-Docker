@@ -44,3 +44,66 @@ To do this, connect the Docker CLI in the Jenkins container to the Docker daemon
 * Install Suggested Plugins
 * Create the First Admin User
 
+## 6. A Simple Sample Pipeline Script
+
+* Create a Pipeline project
+* Paste this sample pipeline script
+```bash
+pipeline{
+    agent any
+     tools {
+        maven "maven3.9.3"
+    }
+    
+    stages{
+        stage('1. Git clone'){
+            steps{
+                sh "echo 'Cloning the latest version of the application'"
+                git "https://github.com/MerciBoi/maven-web-application"
+            }
+        }
+        stage('2. Test and Build'){
+            steps{
+                sh "echo 'Running Unit testing'"
+                sh "echo 'Unit testing done. Creating packages.'"
+                sh "mvn clean package"
+                sh "echo 'Artifacts created'"
+            }
+        }
+        stage('3. Predeployment'){
+            steps{
+            withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                sh "echo 'Predeployment in progress'"
+                sh "docker build -t chydinma/tesl:$BUILD_NUMBER ."
+                sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+                sh "docker push chydinma/tesl:$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('4. Email Notification'){
+            steps{
+                sh "echo 'Application deployment successful'"
+                sh "echo 'Congratulations, end-to-end automation process completed.'"
+                emailext (attachLog: true, body: 'The build is complete.', subject: 'Build Complete', to: 'dimmalives@gmail.com')
+                }
+            }
+        }
+    }
+```
+
+### Before you run the build, ensure you do the following
+
+* Install tool `Maven`, here used as `maven3.9.3`
+* Create Credential for DockerHub login of type `Username and Password`, here used as `dockercred`
+* Bind the credential `dockercred` to variables as used in the pipeline script
+  * Go to `Pipeline syntax` generator
+  * Use `withcredentials: Bind credentials to variables`
+  * Bindings should be `Username and password (separated)`
+  * Specify `Username Variable` and `Password Variable`, here used as `DOCKER_USER` and `DOCKER_PASS` respectively
+  * Generate Pipeline Script
+  * Copy and paste, as shown above
+
+## 7. Now, Run your build!
+
+## Hope the build is successful!
+
