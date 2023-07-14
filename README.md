@@ -102,6 +102,7 @@ pipeline{
   * Specify `Username Variable` and `Password Variable`, here used as `DOCKER_USER` and `DOCKER_PASS` respectively
   * Generate Pipeline Script
   * Copy and paste, as shown above
+* Notice that Email Notification was configured, you may edit the script to remove that if you have not configured your Jenkins for Email Notification, or otherwise.
 
 ## 7. Now, Run your build!
 
