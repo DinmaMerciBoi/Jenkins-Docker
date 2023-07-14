@@ -74,9 +74,9 @@ pipeline{
             steps{
             withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
                 sh "echo 'Predeployment in progress'"
-                sh "docker build -t chydinma/tesl:$BUILD_NUMBER ."
+                sh "docker build -t chydinma/test:$BUILD_NUMBER ."
                 sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
-                sh "docker push chydinma/tesl:$BUILD_NUMBER"
+                sh "docker push chydinma/test:$BUILD_NUMBER"
                 }
             }
         }
